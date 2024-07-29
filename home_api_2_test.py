@@ -87,11 +87,13 @@ class Test_location():
         """Читаем place_id из нашего текстового документа"""
         file = open('place_id.txt', 'r')
         content = file.readlines()
-        p_id_1 = content[-5].rstrip('\n')
-        p_id_2 = content[-4].rstrip('\n')
-        p_id_3 = content[-3].rstrip('\n')
-        p_id_4 = content[-2].rstrip('\n')
-        p_id_5 = content[-1].rstrip('\n')
+        p_id_1 = content[-5]
+        p_id_2 = content[-4]
+        p_id_3 = content[-3]
+        p_id_4 = content[-2]
+        p_id_5 = content[-1]
+        place_id_list_delete = [p_id_2, p_id_4]
+        print(place_id_list_delete)
         place_id_list = [p_id_1, p_id_2, p_id_3, p_id_4, p_id_5]
         print(place_id_list)
         print(f"Place-id успешно взяты из текстового документа.")
@@ -103,27 +105,22 @@ class Test_location():
         delete_resourse = "/maps/api/place/delete/json"
         delete_url = base_url + delete_resourse + key
         print(delete_url)
-        json_for_delete_location = {
-            "place_id": p_id_2
-        }
-        result_delete = requests.delete(delete_url, json=json_for_delete_location)
-        print(result_delete.text)
-        print(f"Статус код: {result_delete.status_code}")  # С помощью данной команды мы можем получить наш статус код.
-        assert 200 == result_delete.status_code  # Сравниваем, что система нам выдала статус код 200.
-        print("Успешно!!! Удаление второй локации прошло успешно.")
-        json_for_delete_location = {
-            "place_id": p_id_4
-        }
-        result_delete = requests.delete(delete_url, json=json_for_delete_location)
-        print(result_delete.text)
-        print(f"Статус код: {result_delete.status_code}")  # С помощью данной команды мы можем получить наш статус код.
-        assert 200 == result_delete.status_code  # Сравниваем, что система нам выдала статус код 200.
-        print("Успешно!!! Удаление четвёртой локации прошло успешно.")
+        for p_id in place_id_list_delete:
+            place_id = p_id.rstrip('\n')
+            json_for_delete_location = {
+                "place_id": place_id
+            }
+            result_delete = requests.delete(delete_url, json=json_for_delete_location)
+            print(result_delete.text)
+            print(f"Статус код: {result_delete.status_code}")  # С помощью данной команды мы можем получить наш статус код.
+            assert 200 == result_delete.status_code  # Сравниваем, что система нам выдала статус код 200.
+            print(f"Успешно!!! Удаление {place_id} прошло успешно.")
 
         """Отбор существующих и несуществующих локаций и запись существующих в отдельный файл."""
         get_resourse = "/maps/api/place/get/json"  # Ресурс метода GET.
         for p_id in place_id_list:
-            get_url = f"{base_url + get_resourse + key}&place_id={p_id}"
+            place_id = p_id.rstrip('\n')
+            get_url = f"{base_url + get_resourse + key}&place_id={place_id}"
             print(get_url)
             result_g = requests.get(get_url)
             result_get = result_g.status_code
